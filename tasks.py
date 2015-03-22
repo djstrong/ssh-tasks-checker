@@ -34,10 +34,20 @@ class Tasks:
             tasks_results.append((result, description))
         return tasks_results
 
+    def exec_command(self, command):
+        return self.ssh.exec_command(command)
+
+    def exec_sudo_command(self, command):
+        chan=self.ssh.get_transport().open_session()
+        chan.get_pty()
+        f = chan.makefile()
+        chan.exec_command(command)
+        chan.send('%s\n' % self.password)
+        return f.read()
 
 class Tasks3(Tasks):
     def task1(self):
-        stdin, stdout, stderr = self.ssh.exec_command('dpkg -s apache | grep Status')
+        stdin, stdout, stderr = self.exec_command('dpkg -s apache2 | grep Status')
         out = stdout.read()
 
         if re.search(r'Status: install ok installed', out):
@@ -45,11 +55,15 @@ class Tasks3(Tasks):
         else:
             return False, u'Apache nie zainstalowany'
 
-# tdin, stdout, stderr = ssh.exec_command(
-#     "sudo dmesg")
-# stdin.write('lol\n')
-# stdin.flush()
-# data = stdout.read.splitlines()
+    def task2(self):
+        out = self.exec_sudo_command('sudo service apache2 status')
+        #print out
+        if re.search(r'Status: install ok installed', out):
+            return True, u'Apache zainstalowany'
+        else:
+            return False, u'Apache nie zainstalowany'
 
-#task = Tasks3('192.168.2.32', 'kwrobel', 'password')
-#print task.perform_tasks()
+
+
+# task = Tasks3('192.168.2.3', 'kwrobel', 'password')
+# print task.perform_tasks()
