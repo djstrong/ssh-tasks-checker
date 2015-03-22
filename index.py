@@ -33,7 +33,7 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    #TODO present
+    #TODO present anonymous results
     return render_template('index.html')
 
 
@@ -69,9 +69,10 @@ def show(id):
     get_cursor().execute("SELECT ip,user,password FROM connections WHERE id='%s'" % (id,))
     row = get_cursor().fetchone()
     ip,user,password = row
-    tasks = Tasks3(ip,user,password)
+    tasks = Tasks3(ip,user,password) #TODO define task
     results = tasks.perform_tasks()
-    return render_template('show.html', results=results) #TODO render results for id
+    #TODO save results?
+    return render_template('show.html', results=results)
 
 @app.route('/reset')
 def reset():
