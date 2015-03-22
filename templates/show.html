@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <style>
+        table,th,td {
+        border: 1px solid black;
+        }
+        .green {
+        background-color: #5F5;
+        }
+        .red {
+        background-color: #F55;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Show</title>
+</head>
+<table>
+    <tr><th>Result</th><th>Description</th></tr>
+    {% for result, description in results %}
+    <tr {{'class="green"'|safe if result else 'class="red"'|safe}}>
+    <td>{{ result|e }}</td>
+    <td>{{ description|e }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<body>
+
+</body>
+</html>
