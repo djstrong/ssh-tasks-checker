@@ -8,8 +8,11 @@ import hashlib
 from flask import g
 import paramiko
 from tasks import *
+import colorsys
 
 app = Flask(__name__)
+
+
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -26,15 +29,22 @@ def get_cursor():
 
 with app.app_context():
     c = get_cursor()
-    # TODO create db
-    c.execute("create table IF NOT EXISTS connections (id TEXT PRIMARY KEY, ip TEXT, user TEXT, password TEXT)")
+    c.execute("create table IF NOT EXISTS connections (id TEXT PRIMARY KEY, ip TEXT, user TEXT, password TEXT, task INT, last_result INT)")
     get_db().commit()
 
+def hex_color(percent):
+    r,g,b= colorsys.hsv_to_rgb(float(percent)/100*120/360,1.0,1.0)
+
+    return '#%02x%02x%02x' % (int(255*r), int(255*g), int(255*b))
 
 @app.route('/')
 def index():
-    #TODO present anonymous results
-    return render_template('index.html')
+    get_cursor().execute("SELECT id,ip,user,password,task,last_result FROM connections ")
+    rows = map(lambda (id,ip,user,password,task,last_result):[id,last_result, hex_color(last_result)],  get_cursor().fetchall())
+    results = sorted(filter(lambda row: row[1]!='', rows), key=lambda row: row[1], reverse=True)
+
+    print results
+    return render_template('index.html', results=results)
 
 
 @app.route('/add', methods=['GET'])
@@ -47,6 +57,7 @@ def save():
     ip = request.form['ip']
     user = request.form['user']
     password = request.form['password']
+    task = int(request.form['task'])
     id = hashlib.sha1(ip + user + password).hexdigest()
 
     get_cursor().execute("SELECT * FROM connections WHERE id='%s'" % (id,))
@@ -54,25 +65,38 @@ def save():
     row = get_cursor().fetchone()
 
     if not row:
-        get_cursor().execute("INSERT INTO connections VALUES ('%s','%s','%s','%s')" % (id, ip, user, password))
+        get_cursor().execute("INSERT INTO connections VALUES ('%s','%s','%s','%s','%d','')" % (id, ip, user, password, task))
+        get_db().commit()
+    else:
+        get_cursor().execute("UPDATE connections SET task='%d', last_result='' WHERE id='%s'" % (task,id))
         get_db().commit()
 
     return redirect(url_for('.show', id=id))
 
-def check(ip,user,password,task):
-    task(ip,user,password)
 
 
+def results_percentage(results):
+    count=0
+    for result, description in results:
+        if result:
+            count+=1
+    return int(100.0*count/len(results))
 
 @app.route('/show/<id>')
 def show(id):
-    get_cursor().execute("SELECT ip,user,password FROM connections WHERE id='%s'" % (id,))
+    get_cursor().execute("SELECT id,ip,user,password,task FROM connections WHERE id='%s'" % (id,))
     row = get_cursor().fetchone()
-    ip,user,password = row
-    tasks = Tasks3(ip,user,password) #TODO define task
+    id,ip,user,password,task = row
+    tasks_class=globals()['Tasks%d'%task]
+    tasks = tasks_class(ip,user,password)
     results = tasks.perform_tasks()
-    #TODO save results?
-    return render_template('show.html', results=results)
+    result = results_percentage(results)
+    #save result
+    get_cursor().execute("UPDATE connections SET last_result='%d' WHERE id='%s'" % (result,id))
+    get_db().commit()
+
+
+    return render_template('show.html', results=results, result=result)
 
 @app.route('/reset')
 def reset():

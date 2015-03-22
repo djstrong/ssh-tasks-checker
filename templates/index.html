@@ -3,9 +3,26 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <a href="add">Add connection</a>
+        <style>
+        table,th,td {
+        border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
+<a href="add">Add/edit connection</a>
+
+<h1>Scores</h1>
+
+<table>
+    <tr><th>Name</th><th>Result</th></tr>
+    {% for name, result, color in results %}
+    <tr style="background-color: {{color|safe }};">
+    <td>{{ name|e }}</td>
+    <td>{{ result|e }}</td>
+    </tr>
+    {% endfor %}
+</table>
 
 </body>
 </html>
