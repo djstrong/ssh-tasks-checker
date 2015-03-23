@@ -2,7 +2,9 @@
 
 import paramiko
 import re
-
+import urllib2
+import traceback
+import base64
 
 class Tasks:
     def __init__(self, ip, user, password):
@@ -31,6 +33,7 @@ class Tasks:
             except Exception as e:
                 result = False
                 description = e
+                traceback.print_exc()
             tasks_results.append((result, description))
         return tasks_results
 
@@ -46,7 +49,7 @@ class Tasks:
         return f.read()
 
 class Tasks3(Tasks):
-    def task1(self):
+    def task01(self):
         stdin, stdout, stderr = self.exec_command('dpkg -s apache2 | grep Status')
         out = stdout.read()
 
@@ -55,13 +58,106 @@ class Tasks3(Tasks):
         else:
             return False, u'Apache nie zainstalowany'
 
-    def task2(self):
+    def task02(self):
         out = self.exec_sudo_command('sudo service apache2 status')
-        #print out
-        if re.search(r'Status: install ok installed', out):
-            return True, u'Apache zainstalowany'
+
+        if re.search(r'is not running', out):
+            return False, u'Apache nie uruchomiony'
         else:
-            return False, u'Apache nie zainstalowany'
+            return True, u'Apache uruchomiony'
+
+    def task03(self):
+        response = urllib2.urlopen('http://%s'%self.ip)
+        try:
+            html = response.read()
+        except urllib2.URLError:
+            return False, u'Strona WWW jest niedostępna'
+        return True, u'Strona WWW jest dostępna'
+
+    def task04(self):
+        response = urllib2.urlopen('http://%s'%self.ip)
+        html = response.read()
+
+        if re.search(r'Witaj na stronie EPI', html):
+            return True, u'Komunikat "Witaj..."'
+        else:
+            return False, u'Brak komunikatu "Witaj.." na stronie'
+
+    def task05(self):
+
+        try:
+            response = urllib2.urlopen('http://%s/~%s'%(self.ip,self.user))
+            html = response.read()
+        except urllib2.URLError as e:
+            return False, u'Strona domowa użytkownika jest niedostępna: %s'%e
+        return True, u'Strona domowa użytkownika jest dostępna'
+
+    def task06(self):
+        stdin, stdout, stderr = self.exec_command('a2query -m userdir')
+        out = stdout.read()
+
+        if re.search(r'enabled', out):
+            return True, u'Moduł userdir włączony'
+        else:
+            return False, u'Moduł userdir wyłączony'
+
+    def task07(self):
+        stdin, stdout, stderr = self.exec_command('grep -E "UserDir\s+public_html" /etc/apache2/sites-enabled/*')
+        out = stdout.read()
+
+        if re.search(r'UserDir', out):
+            return True, u'Dyrektywa UserDir'
+        else:
+            return False, u'Brak dyrektywy UserDir'
+
+
+    def task08(self):
+        stdin, stdout, stderr = self.exec_command('find public_html/ -name ".git"')
+        out = stdout.read()
+
+        if re.search(r'\.git', out):
+            return True, u'Repozytorium Git w public_html'
+        else:
+            return False, u'Brak repozytorium w public_html'
+
+
+    def task09(self):
+        try:
+            response = urllib2.urlopen('http://%s/~%s/projekt'%(self.ip,self.user))
+            html = response.read()
+
+        except urllib2.HTTPError as e:
+            if re.search(r'401: Unauthorized', str(e)):
+                return True, u'Projekt wymaga logowania'
+            else:
+                return False, u'Błąd dostępu do projektu'
+        return False, u'Projekt nie wymaga logowania'
+
+    def task10(self):
+        request = urllib2.Request('http://%s/~%s/projekt'%(self.ip,self.user))
+        base64string = base64.encodestring('%s:%s' % ('student', 'password')).replace('\n', '')
+        request.add_header("Authorization", "Basic %s" % base64string)
+        response = urllib2.urlopen(request)
+
+        try:
+            html = response.read()
+            #print html
+        except urllib2.URLError:
+            return False, u'Projekt jest niedostępny przy podaniu danych logowania'
+        return True, u'Projekt jest dostępny przy podaniu danych logowania'
+
+
+    def task11(self):
+        try:
+            response = urllib2.urlopen('http://%s/~%s/projekt/.git'%(self.ip,self.user))
+            html = response.read()
+
+        except urllib2.HTTPError as e:
+            if re.search(r'Forbidden', str(e)):
+                return True, u'Repozytorium Git jest niedostępne'
+            else:
+                return False, u'Błąd dostępu do repozytorium Git'
+        return False, u'Repozytorium git jest dostępne'
 
 
 

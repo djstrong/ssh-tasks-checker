@@ -15,7 +15,13 @@
     <meta charset="UTF-8">
     <title>Show</title>
 </head>
-<h1>Completed: {{result}}%</h1>
+<body>
+<h1>Completed: {{result}}% {{'Congratulations!'|safe if result==100}}</h1>
+
+{% if result==100  %}
+<iframe width="854" height="510" src="https://www.youtube.com/embed/04854XqcfCY?autoplay=1&start=39" frameborder="0" allowfullscreen></iframe>
+{% endif %}
+
 <table>
     <tr><th>Result</th><th>Description</th></tr>
     {% for result, description in results %}
@@ -27,7 +33,12 @@
 </table>
 
 
-<body>
 
+
+
+
+{% if result>=50 and result<100 %}
+<iframe width="854" height="510" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+{% endif %}
 </body>
 </html>
