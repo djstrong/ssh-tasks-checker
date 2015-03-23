@@ -158,8 +158,3 @@ class Tasks3(Tasks):
             else:
                 return False, u'Błąd dostępu do repozytorium Git'
         return False, u'Repozytorium git jest dostępne'
-
-
-
-# task = Tasks3('192.168.2.3', 'kwrobel', 'password')
-# print task.perform_tasks()

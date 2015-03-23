@@ -18,14 +18,19 @@
 <body>
 <h1>Completed: {{result}}% {{'Congratulations!'|safe if result==100}}</h1>
 
-{% if result==100  %}
-<iframe width="854" height="510" src="https://www.youtube.com/embed/04854XqcfCY?autoplay=1&start=39" frameborder="0" allowfullscreen></iframe>
+{% if result==100 %}
+<iframe width="854" height="510" src="https://www.youtube.com/embed/04854XqcfCY?autoplay=1&start=39" frameborder="0"
+        allowfullscreen></iframe>
 {% endif %}
 
 <table>
-    <tr><th>Result</th><th>Description</th></tr>
+    <tr>
+        <th>Result</th>
+        <th>Description</th>
+    </tr>
     {% for result, description in results %}
-    <tr {{'class="green"'|safe if result else 'class="red"'|safe}}>
+    <tr {{
+    'class="green"'|safe if result else 'class="red"'|safe}}>
     <td>{{ result|e }}</td>
     <td>{{ description|e }}</td>
     </tr>
@@ -33,12 +38,9 @@
 </table>
 
 
-
-
-
-
 {% if result>=50 and result<100 %}
-<iframe width="854" height="510" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+<iframe width="854" height="510" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0"
+        allowfullscreen></iframe>
 {% endif %}
 </body>
 </html>

@@ -2,9 +2,9 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="5" >
+    <meta http-equiv="refresh" content="5">
     <title></title>
-        <style>
+    <style>
         table,th,td {
         border: 1px solid black;
         }
@@ -16,11 +16,14 @@
 <h1>Scores</h1>
 
 <table>
-    <tr><th>Name</th><th>Result</th></tr>
+    <tr>
+        <th>Name</th>
+        <th>Result</th>
+    </tr>
     {% for name,id, result, color in results %}
     <tr style="background-color: {{color|safe }};">
-    <td>{{name|e if name else id|safe}}</td>
-    <td>{{ result|e }}</td>
+        <td>{{name|e if name else id|safe}}</td>
+        <td>{{ result|e }}</td>
     </tr>
     {% endfor %}
 </table>
