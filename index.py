@@ -33,6 +33,8 @@ with app.app_context():
     get_db().commit()
 
 def hex_color(percent):
+    if not percent:
+        percent=0.0
     r,g,b= colorsys.hsv_to_rgb(float(percent)/100*120/360,1.0,1.0)
 
     return '#%02x%02x%02x' % (int(255*r), int(255*g), int(255*b))
@@ -107,4 +109,4 @@ def reset():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', threaded=True)
+    app.run(host='0.0.0.0', threaded=True, debug=True)
