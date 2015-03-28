@@ -101,16 +101,6 @@ class Tasks3(Tasks):
         else:
             return False, u'Moduł userdir wyłączony'
 
-    def task07(self):
-        stdin, stdout, stderr = self.exec_command('grep -E "UserDir\s+public_html" /etc/apache2/sites-enabled/*')
-        out = stdout.read()
-
-        if re.search(r'UserDir', out):
-            return True, u'Dyrektywa UserDir'
-        else:
-            return False, u'Brak dyrektywy UserDir'
-
-
     def task08(self):
         stdin, stdout, stderr = self.exec_command('find public_html/ -name ".git"')
         out = stdout.read()
