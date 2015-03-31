@@ -63,8 +63,10 @@ class Tasks3(Tasks):
 
         if re.search(r'is not running', out):
             return False, u'Apache nie uruchomiony'
-        else:
+        if re.search(r'is running', out):
             return True, u'Apache uruchomiony'
+        else:
+            return False, u'Apache nie uruchomiony'
 
     def task03(self):
         response = urllib2.urlopen('http://%s'%self.ip)
@@ -88,6 +90,12 @@ class Tasks3(Tasks):
         try:
             response = urllib2.urlopen('http://%s/~%s'%(self.ip,self.user))
             html = response.read()
+        except urllib2.HTTPError as e:
+            if re.search(r'401: Unauthorized', str(e)):
+                return True, u'Strona domowa użytkownika jest dostępna'
+            else:
+                return False, u'Strona domowa użytkownika jest niedostępna: %s'%e
+ 
         except urllib2.URLError as e:
             return False, u'Strona domowa użytkownika jest niedostępna: %s'%e
         return True, u'Strona domowa użytkownika jest dostępna'
@@ -101,14 +109,6 @@ class Tasks3(Tasks):
         else:
             return False, u'Moduł userdir wyłączony'
 
-    def task07(self):
-        stdin, stdout, stderr = self.exec_command('grep -E "UserDir\s+public_html" /etc/apache2/sites-enabled/*')
-        out = stdout.read()
-
-        if re.search(r'UserDir', out):
-            return True, u'Dyrektywa UserDir'
-        else:
-            return False, u'Brak dyrektywy UserDir'
 
 
     def task08(self):
@@ -148,6 +148,7 @@ class Tasks3(Tasks):
 
 
     def task11(self):
+        #TODO /~%s/.git
         try:
             response = urllib2.urlopen('http://%s/~%s/projekt/.git'%(self.ip,self.user))
             html = response.read()
