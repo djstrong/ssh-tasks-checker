@@ -148,11 +148,31 @@ class Tasks3(Tasks):
 
 
     def task11(self):
-        #TODO /~%s/.git
+        for function in [self.helper11a, self.helper11b]:
+            v,d = function()
+            if v:
+                return v,d
+        return v,d
+
+    def helper11a(self):
         try:
             response = urllib2.urlopen('http://%s/~%s/projekt/.git'%(self.ip,self.user))
             html = response.read()
 
+        #TODO gdy public_html nie utworzony jest true
+        except urllib2.HTTPError as e:
+            if re.search(r'Forbidden', str(e)):
+                return True, u'Repozytorium Git jest niedostępne'
+            else:
+                return False, u'Błąd dostępu do repozytorium Git'
+        return False, u'Repozytorium git jest dostępne'
+
+    def helper11b(self):
+        try:
+            response = urllib2.urlopen('http://%s/~%s/.git'%(self.ip,self.user))
+            html = response.read()
+
+        #TODO gdy public_html nie utworzony jest true
         except urllib2.HTTPError as e:
             if re.search(r'Forbidden', str(e)):
                 return True, u'Repozytorium Git jest niedostępne'
