@@ -179,3 +179,68 @@ class Tasks3(Tasks):
             else:
                 return False, u'Błąd dostępu do repozytorium Git'
         return False, u'Repozytorium git jest dostępne'
+
+class Tasks4(Tasks):
+    def task01(self):
+        stdin, stdout, stderr = self.exec_command('ping -c 1 virtual')
+        out = stdout.read()
+
+        if re.search(r'1 received', out):
+            return True, u'Alias virtual ustawiony'
+        else:
+            return False, u'Alias virtual nie ustawiony'
+
+    def task02(self):
+        stdin, stdout, stderr = self.exec_command('dpkg -s mysql-server | grep Status')
+        out = stdout.read()
+
+        if re.search(r'Status: install ok installed', out):
+            return True, u'Serwer MySQL zainstalowany'
+        else:
+            return False, u'Serwer MySQL nie zainstalowany'
+
+    def task03(self):
+        out = self.exec_sudo_command('sudo service mysql status')
+
+        if re.search(r'waiting', out):
+            return False, u'MySQL nie uruchomiony'
+        if re.search(r'running', out):
+            return True, u'MySQL uruchomiony'
+        else:
+            return False, u'MySQL nie uruchomiony'
+
+    def task04(self):
+        stdin, stdout, stderr = self.exec_command('mysql -u root --password=secret -e "show databases;"')
+        out = stdout.read()
+
+        if re.search(r'Database', out):
+            return True, u'Zalogowano do bazy MySQL'
+        else:
+            return False, u'Brak możliwości zalogowania się do bazy MySQL jako użytkownik root z hasłem secret'
+
+    def task05(self):
+        stdin, stdout, stderr = self.exec_command('mysql -u root --password=secret -e "show databases;"')
+        out = stdout.read()
+
+        if re.search(r'epi', out):
+            return True, u'Utworzona baza "epi"'
+        else:
+            return False, u'Brak bazy "epi"'
+
+    def task06(self):
+        stdin, stdout, stderr = self.exec_command('mysql -u root --password=secret -e "show grants for \'user1\'@\'localhost\';"')
+        out = stdout.read()
+
+        if re.search(r'Grants for user1', out):
+            return True, u'Użytkownik user1 utworzony'
+        else:
+            return False, u'Brak użytkownika user1'
+
+    def task07(self):
+        stdin, stdout, stderr = self.exec_command('mysql -u root --password=secret -e "show grants for \'user1\'@\'localhost\';"')
+        out = stdout.read()
+
+        if re.search(r'ON .epi.\.\* TO \'user1', out):
+            return True, u'Prawa przyznane do bazy epi'
+        else:
+            return False, u'Nieprzyznane prawa do bazy epi'

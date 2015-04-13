@@ -105,7 +105,7 @@ def show(id):
     get_cursor().execute("UPDATE connections SET last_result='%d' WHERE id='%s'" % (result, id))
     get_db().commit()
 
-    return render_template('show.html', results=results, result=result)
+    return render_template('show%d.html'% task, results=results, result=result, checks_done=len(results))
 
 
 @app.route('/reset')
