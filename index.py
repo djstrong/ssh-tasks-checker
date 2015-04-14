@@ -84,13 +84,19 @@ def save():
     return redirect(url_for('.show', id=id))
 
 
+def results_count(results):
+    count = 0
+    for result, description in results:
+        if result:
+            count += 1
+    return count
+
 def results_percentage(results):
     count = 0
     for result, description in results:
         if result:
             count += 1
-    return int(100.0 * count / len(results))
-
+    return int(100.0 * results_count(results) / len(results))
 
 @app.route('/show/<id>')
 def show(id):
@@ -105,7 +111,7 @@ def show(id):
     get_cursor().execute("UPDATE connections SET last_result='%d' WHERE id='%s'" % (result, id))
     get_db().commit()
 
-    return render_template('show%d.html'% task, results=results, result=result, checks_done=len(results))
+    return render_template('show%d.html'% task, results=results, result=result, checks_done=results_count(results))
 
 
 @app.route('/reset')
