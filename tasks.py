@@ -214,7 +214,7 @@ class Tasks4(Tasks):
         out = stdout.read()
 
         if re.search(r'Database', out):
-            return True, u'Zalogowano do bazy MySQL'
+            return True, u'Zalogowano do bazy MySQL jako root'
         else:
             return False, u'Brak możliwości zalogowania się do bazy MySQL jako użytkownik root z hasłem secret'
 
@@ -228,16 +228,16 @@ class Tasks4(Tasks):
             return False, u'Brak bazy "epi"'
 
     def task06(self):
-        stdin, stdout, stderr = self.exec_command('mysql -u root --password=secret -e "show grants for \'user1\'@\'localhost\';"')
+        stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "show databases;"')
         out = stdout.read()
 
-        if re.search(r'Grants for user1', out):
-            return True, u'Użytkownik user1 utworzony'
+        if re.search(r'Database', out):
+            return True, u'Zalogowano do bazy MySQL jako user1'
         else:
-            return False, u'Brak użytkownika user1'
+            return False, u'Brak możliwości zalogowania się do bazy MySQL jako użytkownik user1 z hasłem user1'
 
     def task07(self):
-        stdin, stdout, stderr = self.exec_command('mysql -u root --password=secret -e "show grants for \'user1\'@\'localhost\';"')
+        stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "SHOW GRANTS FOR CURRENT_USER')
         out = stdout.read()
 
         if re.search(r'ON .epi.\.\* TO \'user1', out):
