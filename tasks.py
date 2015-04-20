@@ -237,10 +237,101 @@ class Tasks4(Tasks):
             return False, u'Brak możliwości zalogowania się do bazy MySQL jako użytkownik user1 z hasłem user1'
 
     def task07(self):
-        stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "SHOW GRANTS FOR CURRENT_USER')
+        stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "SHOW GRANTS FOR CURRENT_USER"')
         out = stdout.read()
 
         if re.search(r'ON .epi.\.\* TO \'user1', out):
             return True, u'Prawa przyznane do bazy epi'
         else:
-            return False, u'Nieprzyznane prawa do bazy epi'
+            stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "SHOW GRANTS FOR \'user1\'@\'%\'"')
+            out = stdout.read()
+
+            if re.search(r'ON .epi.\.\* TO \'user1', out):
+                return True, u'Prawa przyznane do bazy epi'
+            else:
+                return False, u'Nieprzyznane prawa do bazy epi'
+
+class Tasks5(Tasks):
+    def task01(self):
+        stdin, stdout, stderr = self.exec_command('dpkg -s libapache2-mod-php5 | grep Status')
+        out = stdout.read()
+
+        if re.search(r'Status: install ok installed', out):
+            return True, u'Moduł Apache do obsługi PHP zainstalowany'
+        else:
+            return False, u'Moduł Apache do obsługi PHP nie zainstalowany'
+
+    # def task02(self):
+    #     stdin, stdout, stderr = self.exec_command('dpkg -s php5 | grep Status')
+    #     out = stdout.read()
+    #
+    #     if re.search(r'Status: install ok installed', out):
+    #         return True, u'PHP zainstalowane'
+    #     else:
+    #         return False, u'PHP nie zainstalowane'
+
+    def task03(self):
+        stdin, stdout, stderr = self.exec_command('dpkg -s php5-mysql | grep Status')
+        out = stdout.read()
+
+        if re.search(r'Status: install ok installed', out):
+            return True, u'Moduł MySQL dla PHP zainstalowany'
+        else:
+            return False, u'Moduł MySQL dla PHP nie zainstalowany'
+
+    def task04(self):
+
+        try:
+            response = urllib2.urlopen('http://%s/~%s/test.php'%(self.ip,self.user))
+            html = response.read()
+        except urllib2.HTTPError as e:
+            return False, u'Strona test.php jest niedostępna: %s'%e
+
+        if re.search(r'PHP Version 5', html):
+            return True, u'Strona test.php wykonała kod PHP'
+        elif re.search(r'phpinfo\(\)', html):
+            return False, u'Strona test.php nie wykonała kodu PHP'
+        else:
+            return False, u'Strona test.php nie wykonała phpinfo()'
+
+    def task05(self):
+        stdin, stdout, stderr = self.exec_command('mysql -u root --password=secret -e "show databases;"')
+        out = stdout.read()
+
+        if re.search(r'phpbb', out):
+            return True, u'Utworzona baza "phpBB"'
+        else:
+            return False, u'Brak bazy "phpBB"'
+
+    def task06(self):
+        stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "SHOW GRANTS FOR CURRENT_USER"')
+        out = stdout.read()
+
+        if re.search(r'ON .epi.\.\* TO \'phpbb', out):
+            return True, u'Prawa przyznane do bazy phpbb'
+        else:
+            stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "SHOW GRANTS FOR \'user1\'@\'%\'"')
+            out = stdout.read()
+
+            if re.search(r'ON .phpbb.\.\* TO \'user1', out):
+                return True, u'Prawa przyznane do bazy phpbb'
+            else:
+                return False, u'Nieprzyznane prawa do bazy phpbb'
+
+    def task07(self):
+        link = 'http://%s/~user/phpBB3/'%self.ip
+        try:
+            response = urllib2.urlopen(link)
+            html = response.read()
+        except urllib2.URLError as e:
+            return False, u'Forum phpBB jest niedostępne pod adresem %s: %s' % (link,e)
+        return True, u'Forum phpBB jest dostępne'
+
+    def task08(self):
+        response = urllib2.urlopen('http://%s/~user/phpBB3/'%self.ip)
+        html = response.read()
+
+        if re.search(r'Board index', html):
+            return True, u'Forum zostało zainstalowane'
+        else:
+            return False, u'Forum nie zostało zainstalowane'
