@@ -307,7 +307,7 @@ class Tasks5(Tasks):
         stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "SHOW GRANTS FOR CURRENT_USER"')
         out = stdout.read()
 
-        if re.search(r'ON .epi.\.\* TO \'phpbb', out):
+        if re.search(r'ON .phpbb.\.\* TO \'user1', out):
             return True, u'Prawa przyznane do bazy phpbb'
         else:
             stdin, stdout, stderr = self.exec_command('mysql -u user1 --password=user1 -e "SHOW GRANTS FOR \'user1\'@\'%\'"')

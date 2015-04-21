@@ -20,10 +20,11 @@
         <th>Name</th>
         <th>Result</th>
     </tr>
-    {% for name,id, result, color in results %}
+    {% for name,id, result, color,task in results %}
     <tr style="background-color: {{color|safe }};">
         <td>{{name|e if name else id|safe}}</td>
         <td>{{ result|e }}</td>
+        <td>{{ task|e }}</td>
     </tr>
     {% endfor %}
 </table>
