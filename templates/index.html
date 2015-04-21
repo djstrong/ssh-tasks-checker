@@ -11,14 +11,15 @@
     </style>
 </head>
 <body>
-<a href="add">Add/edit connection</a>
+<a href="add">Dodaj/edytuj połączenie</a>
 
-<h1>Scores</h1>
+<h1>Wyniki</h1>
 
 <table>
     <tr>
-        <th>Name</th>
-        <th>Result</th>
+        <th>Nazwa</th>
+        <th>Wynik</th>
+        <th>Laboratorium</th>
     </tr>
     {% for name,id, result, color,task in results %}
     <tr style="background-color: {{color|safe }};">

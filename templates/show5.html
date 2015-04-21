@@ -16,13 +16,13 @@
     <title>Show</title>
 </head>
 <body>
-<h1>Completed: {{result}}% {{'Congratulations!'|safe if result==100}}</h1>
+<h1>Ukończono: {{result}}% {{'Gratulacje!'|safe if result==100}}</h1>
 
 
 <table>
     <tr>
-        <th>Result</th>
-        <th>Description</th>
+        <th>Wynik</th>
+        <th>Opis</th>
     </tr>
     {% for result, description in results %}
     <tr {{
