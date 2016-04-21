@@ -48,7 +48,7 @@ def index():
     rows = map(
         lambda (id, ip, user, password, task, last_result, name): [name, id, last_result, hex_color(last_result), task],
         get_cursor().fetchall())
-    results = sorted(filter(lambda row: row[2] != '', rows), key=lambda row: row[2], reverse=True)
+    results = sorted(filter(lambda row: row[2] != '', rows), key=lambda row: (row[4],row[2]), reverse=True)
 
     #print results
     return render_template('index.html', results=results)

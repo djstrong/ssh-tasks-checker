@@ -48,6 +48,35 @@ class Tasks:
         chan.send('%s\n' % self.password)
         return f.read()
 
+class Tasks2(Tasks):
+    def task01(self):
+        stdin, stdout, stderr = self.exec_command('dpkg -s git | grep Status')
+        out = stdout.read()
+
+        if re.search(r'Status: install ok installed', out):
+            return True, u'Git zainstalowany'
+        else:
+            return False, u'Git nie zainstalowany'  
+        
+    def task02(self):
+        stdin, stdout, stderr = self.exec_command('ls ~/project2/')
+        out = stdout.read()
+
+        if len(out)>1:
+            return True, u'Katalog project2 istnieje'
+        else:
+            return False, u'Katalog project2 nie istnieje'  
+     
+    def task03(self):
+        stdin, stdout, stderr = self.exec_command('ls ~/repos/project2.git')
+        out = stdout.read()
+
+        if len(out)>1:
+            return True, u'Katalog repos/project2.git istnieje'
+        else:
+            return False, u'Katalog repos/project2.git nie istnieje'
+     
+        
 class Tasks3(Tasks):
     def task01(self):
         stdin, stdout, stderr = self.exec_command('dpkg -s apache2 | grep Status')
