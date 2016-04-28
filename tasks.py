@@ -360,7 +360,7 @@ class Tasks5(Tasks):
         response = urllib2.urlopen('http://%s/~user/phpBB3/'%self.ip)
         html = response.read()
 
-        if re.search(r'Board index', html):
+        if re.search(r'Board index', html) or re.search(r'Wykaz for', html):
             return True, u'Forum zostało zainstalowane'
         else:
             return False, u'Forum nie zostało zainstalowane'
