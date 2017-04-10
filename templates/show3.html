@@ -18,10 +18,6 @@
 <body>
 <h1>Ukończono: {{result}}% {{'Gratulacje!'|safe if result==100}}</h1>
 
-{% if result==100 %}
-<iframe width="854" height="510" src="https://www.youtube.com/embed/04854XqcfCY?autoplay=1&start=39" frameborder="0"
-        allowfullscreen></iframe>
-{% endif %}
 
 <table>
     <tr>
@@ -37,10 +33,24 @@
     {% endfor %}
 </table>
 
+<br>
+<img src="{{ ['https://68.media.tumblr.com/115038dfa7040316b2421e218404b9c1/tumblr_omhny60rPu1s0hc2ro1_500.jpg',
+'https://68.media.tumblr.com/9b1d68d1470c6834449daa38c43e27d7/tumblr_oli4luOEgq1tnc4uvo1_500.jpg',
+'https://68.media.tumblr.com/0a3731504976f446814557e63890db85/tumblr_olboccJ4VF1uvv5gho1_500.jpg',
+'https://i.ytimg.com/vi/RZ3G3seq__s/hqdefault.jpg',
+'http://static.boredpanda.com/blog/wp-content/uploads/2014/12/cutest-baby-animals-7__605.jpg',
+'http://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-13.jpg',
+'http://i.amz.mshcdn.com/5L5s5u2NuZhkjZMn-trSgxnnhVU=/950x534/filters:quality(90)/2013%2F05%2F01%2F63%2Fbabypony.99cd6.jpg',
+'http://www.denverpost.com/wp-content/uploads/2016/11/112812_babyanimals_002.jpg?w=620',
+'http://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals-2/cute-baby-animals-2-2.jpg',
+'http://allswalls.com/images/baby-animals-wallpaper-4.jpg',
+'http://onehdwallpaper.com/wp-content/uploads/2016/07/Cute-Baby-Cat-Beautiful-Baby-HD-Wallpaper.jpg',
+'https://s-media-cache-ak0.pinimg.com/736x/08/29/3f/08293f02a568e8188ab2a1c02a1a1908.jpg'][checks_done] }}">
 
-{% if result>=50 and result<100 %}
-<iframe width="854" height="510" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0"
-        allowfullscreen></iframe>
-{% endif %}
+
+<p>"The images of baby animals were rated as cuter and more infantile than the images of adult animals..."</p>
+<p>"...viewing cute images improved performance on tasks that required carefulness."</p>
+<p>Nittono, Hiroshi, et al. <a href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0046362">The power of kawaii: Viewing cute images promotes a careful behavior and narrows attentional focus."</a></p>
+
 </body>
 </html>
