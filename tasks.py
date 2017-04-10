@@ -90,9 +90,9 @@ class Tasks3(Tasks):
 
     def task02(self):
         out = self.exec_sudo_command('sudo service apache2 status | cat')
-        if re.search(r'is not running', out):
+        if re.search(r'dead', out):
             return False, u'Apache nie uruchomiony'
-        if re.search(r'is running', out):
+        if re.search(r'running', out):
             return True, u'Apache uruchomiony'
         else:
             return False, u'Apache nie uruchomiony'
