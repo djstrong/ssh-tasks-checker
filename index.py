@@ -30,7 +30,7 @@ def get_cursor():
 with app.app_context():
     c = get_cursor()
     c.execute(
-        "create table IF NOT EXISTS connections (id TEXT PRIMARY KEY, ip TEXT, user TEXT, password TEXT, task INT, last_result INT, name TEXT)")
+        "create table IF NOT EXISTS connections (id TEXT PRIMARY KEY, ip TEXT, user TEXT, password TEXT, task INT, last_result INT, name TEXT, port_ssh INT, port_www INT)")
     get_db().commit()
 
 
@@ -66,6 +66,8 @@ def save():
     password = request.form['password']
     task = int(request.form['task'])
     name = request.form['name']
+    port_ssh = int(request.form['port_ssh'])
+    port_www = int(request.form['port_www'])
     id = hashlib.sha1(ip + user + password).hexdigest()
 
     get_cursor().execute("SELECT * FROM connections WHERE id='%s'" % (id,))
@@ -74,7 +76,7 @@ def save():
 
     if not row:
         get_cursor().execute(
-            "INSERT INTO connections VALUES ('%s','%s','%s','%s','%d','','%s')" % (id, ip, user, password, task, name))
+            "INSERT INTO connections VALUES ('%s','%s','%s','%s','%d','','%s','%d','%d')" % (id, ip, user, password, task, name, port_ssh, port_www))
         get_db().commit()
     else:
         get_cursor().execute(
@@ -100,11 +102,11 @@ def results_percentage(results):
 
 @app.route('/show/<id>')
 def show(id):
-    get_cursor().execute("SELECT id,ip,user,password,task FROM connections WHERE id='%s'" % (id,))
+    get_cursor().execute("SELECT id,ip,user,password,task,port_ssh,port_www FROM connections WHERE id='%s'" % (id,))
     row = get_cursor().fetchone()
-    id, ip, user, password, task = row
+    id, ip, user, password, task, port_ssh, port_www = row
     tasks_class = globals()['Tasks%d' % task]
-    tasks = tasks_class(ip, user, password)
+    tasks = tasks_class(ip, user, password, port_ssh, port_www)
     results = tasks.perform_tasks()
     result = results_percentage(results)
     #save result

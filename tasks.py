@@ -7,16 +7,18 @@ import traceback
 import base64
 
 class Tasks:
-    def __init__(self, ip, user, password):
+    def __init__(self, ip, user, password,port_ssh, port_www):
         self.ip = ip
         self.user = user
         self.password = password
+        self.port_ssh=port_ssh
+        self.port_www=port_www
 
     def connect(self):
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
-            self.ssh.connect(self.ip, username=self.user, password=self.password)
+            self.ssh.connect(self.ip, username=self.user, password=self.password, port=self.port_ssh)
             return True, u'Zalogowano przez SSH'
         except Exception as e:
             return False, u'Brak możliwości zalogowania przez SSH: %s' % e
@@ -98,7 +100,7 @@ class Tasks3(Tasks):
             return False, u'Apache nie uruchomiony'
 
     def task03(self):
-        response = urllib2.urlopen('http://%s'%self.ip)
+        response = urllib2.urlopen('http://%s:%s' % (self.ip, self.port_www))
         try:
             html = response.read()
         except urllib2.URLError:
@@ -106,7 +108,7 @@ class Tasks3(Tasks):
         return True, u'Strona WWW jest dostępna'
 
     def task04(self):
-        response = urllib2.urlopen('http://%s'%self.ip)
+        response = urllib2.urlopen('http://%s:%s' % (self.ip, self.port_www))
         html = response.read()
 
         if re.search(r'Witaj na stronie EPI', html):
@@ -117,7 +119,7 @@ class Tasks3(Tasks):
     def task05(self):
 
         try:
-            response = urllib2.urlopen('http://%s/~%s'%(self.ip,self.user))
+            response = urllib2.urlopen('http://%s:%s/~%s'%(self.ip,self.port_www,self.user))
             html = response.read()
         except urllib2.HTTPError as e:
             if re.search(r'401: Unauthorized', str(e)):
@@ -152,7 +154,7 @@ class Tasks3(Tasks):
 
     def task09(self):
         try:
-            response = urllib2.urlopen('http://%s/~%s/projekt'%(self.ip,self.user))
+            response = urllib2.urlopen('http://%s:%s/~%s/projekt'%(self.ip,self.port_www,self.user))
             html = response.read()
 
         except urllib2.HTTPError as e:
@@ -163,7 +165,7 @@ class Tasks3(Tasks):
         return False, u'Projekt nie wymaga logowania'
 
     def task10(self):
-        request = urllib2.Request('http://%s/~%s/projekt'%(self.ip,self.user))
+        request = urllib2.Request('http://%s:%s/~%s/projekt'%(self.ip,self.port_www,self.user))
         base64string = base64.encodestring('%s:%s' % ('student', 'password')).replace('\n', '')
         request.add_header("Authorization", "Basic %s" % base64string)
         response = urllib2.urlopen(request)
@@ -185,7 +187,7 @@ class Tasks3(Tasks):
 
     def helper11a(self):
         try:
-            response = urllib2.urlopen('http://%s/~%s/projekt/.git'%(self.ip,self.user))
+            response = urllib2.urlopen('http://%s:%s/~%s/projekt/.git'%(self.ip,self.port_www,self.user))
             html = response.read()
 
         #TODO gdy public_html nie utworzony jest true
@@ -198,7 +200,7 @@ class Tasks3(Tasks):
 
     def helper11b(self):
         try:
-            response = urllib2.urlopen('http://%s/~%s/.git'%(self.ip,self.user))
+            response = urllib2.urlopen('http://%s:%s/~%s/.git'%(self.ip,self.port_www,self.user))
             html = response.read()
 
         #TODO gdy public_html nie utworzony jest true
@@ -311,7 +313,7 @@ class Tasks5(Tasks):
     def task04(self):
 
         try:
-            response = urllib2.urlopen('http://%s/~%s/test.php'%(self.ip,self.user))
+            response = urllib2.urlopen('http://%s:%s/~%s/test.php'%(self.ip,self.port_www,self.user))
             html = response.read()
         except urllib2.HTTPError as e:
             return False, u'Strona test.php jest niedostępna: %s'%e
@@ -348,7 +350,7 @@ class Tasks5(Tasks):
                 return False, u'Nieprzyznane prawa do bazy phpbb'
 
     def task07(self):
-        link = 'http://%s/~user/phpBB3/'%self.ip
+        link = 'http://%s:%s/~user/phpBB3/'% (self.ip,self.port_www)
         try:
             response = urllib2.urlopen(link)
             html = response.read()
@@ -357,7 +359,7 @@ class Tasks5(Tasks):
         return True, u'Forum phpBB jest dostępne'
 
     def task08(self):
-        response = urllib2.urlopen('http://%s/~user/phpBB3/'%self.ip)
+        response = urllib2.urlopen('http://%s:%s/~user/phpBB3/'% (self.ip,self.port_www))
         html = response.read()
 
         if re.search(r'Board index', html) or re.search(r'Wykaz for', html):
