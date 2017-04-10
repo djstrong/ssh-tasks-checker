@@ -83,15 +83,13 @@ class Tasks3(Tasks):
     def task01(self):
         stdin, stdout, stderr = self.exec_command('dpkg -s apache2 | grep Status')
         out = stdout.read()
-
         if re.search(r'Status: install ok installed', out):
             return True, u'Apache zainstalowany'
         else:
             return False, u'Apache nie zainstalowany'
 
     def task02(self):
-        out = self.exec_sudo_command('sudo service apache2 status')
-
+        out = self.exec_sudo_command('sudo service apache2 status | cat')
         if re.search(r'is not running', out):
             return False, u'Apache nie uruchomiony'
         if re.search(r'is running', out):
@@ -100,6 +98,7 @@ class Tasks3(Tasks):
             return False, u'Apache nie uruchomiony'
 
     def task03(self):
+        print 'http://%s:%s' % (self.ip, self.port_www)
         response = urllib2.urlopen('http://%s:%s' % (self.ip, self.port_www))
         try:
             html = response.read()
@@ -231,7 +230,7 @@ class Tasks4(Tasks):
             return False, u'Serwer MySQL nie zainstalowany'
 
     def task03(self):
-        out = self.exec_sudo_command('sudo service mysql status')
+        out = self.exec_sudo_command('sudo service mysql status | cat')
 
         if re.search(r'waiting', out):
             return False, u'MySQL nie uruchomiony'
