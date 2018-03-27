@@ -18,7 +18,7 @@ class Tasks:
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
-            self.ssh.connect(self.ip, username=self.user, password=self.password, port=self.port_ssh)
+            self.ssh.connect(self.ip, username=self.user, password=self.password, port=self.port_ssh, allow_agent=False,look_for_keys=False)
             return True, u'Zalogowano przez SSH'
         except Exception as e:
             return False, u'Brak możliwości zalogowania przez SSH: %s' % e
